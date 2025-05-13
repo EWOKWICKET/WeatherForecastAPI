@@ -5,15 +5,14 @@ import { DatabaseService } from './database.service';
 
 @Module({
   imports: [
-    ConfigModule,
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
+      inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
         const uri = configService.get<string>('DB_URI');
         if (!uri) throw new Error('DB_URI is undefined');
         return { uri };
       },
-      inject: [ConfigService],
     }),
   ],
   providers: [DatabaseService],

@@ -12,7 +12,5 @@ import { SubscriptionModule } from './subscriptions/subscription.module';
     DatabaseModule,
     SubscriptionModule,
   ],
-  controllers: [],
-  providers: [],
 })
 export class AppModule {}
