@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { DatabaseService } from './database/database.service';
 
 async function bootstrap() {
@@ -8,6 +9,8 @@ async function bootstrap() {
 
   const dbService: DatabaseService = app.get(DatabaseService);
   await dbService.waitForConnection();
+
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   const host = process.env.HOST || 'localhost';
   const port = process.env.PORT || 3001;
