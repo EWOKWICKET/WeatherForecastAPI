@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { DatabaseMigration } from './database/database.migration';
 import { DatabaseService } from './database/database.service';
 
 async function bootstrap() {
@@ -9,6 +10,9 @@ async function bootstrap() {
 
   const dbService: DatabaseService = app.get(DatabaseService);
   await dbService.waitForConnection();
+
+  const dbMigration: DatabaseMigration = app.get(DatabaseMigration);
+  await dbMigration.migrateDatabase();
 
   app.useGlobalFilters(new HttpExceptionFilter());
 
