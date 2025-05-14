@@ -1,33 +1,44 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { MailService } from 'src/mail/mail.service';
 import { CreateSubscriptionDto } from './dtos/create-subscription.dto';
 import { Subscription } from './schemas/subscription.schema';
 
 @Injectable()
 export class SubscriptionService {
-  constructor(@InjectModel(Subscription.name) private readonly subscriptionModel: Model<Subscription>) {}
+  constructor(
+    @InjectModel(Subscription.name) private readonly subscriptionModel: Model<Subscription>,
+    private readonly mailService: MailService,
+  ) {}
 
   async subscribe(subscribeDto: CreateSubscriptionDto) {
     const subscription = new this.subscriptionModel({ ...subscribeDto, confirmed: false });
 
     try {
-      await subscription.save();
-      //use jwt tokens and send a confirm url in email
+      const savedSubscription = await subscription.save();
+      await this.mailService.sendEmail({
+        to: savedSubscription.email,
+        token: savedSubscription._id,
+      });
       return;
     } catch (err) {
+      if (subscription._id) {
+        await this.subscriptionModel.findByIdAndDelete(subscription._id);
+      }
+
       if (err.code === 11000) throw new ConflictException('Email already subscribed');
       else throw err;
     }
   }
 
-  confirm(token: string) {
-    //handle jwt token and update the document
-    return 'Confirming';
+  async confirm(token: string) {
+    const updated = await this.subscriptionModel.findByIdAndUpdate(token, { confirmed: true }).exec();
+    if (!updated) throw new NotFoundException('Token Not Found');
   }
 
-  unsubscribe(token: string) {
-    //handle jwt token and delete the document
-    return 'Unsubscribing';
+  async unsubscribe(token: string) {
+    const deleted = await this.subscriptionModel.findByIdAndDelete(token);
+    if (!deleted) throw new NotFoundException('Token Not Found');
   }
 }
