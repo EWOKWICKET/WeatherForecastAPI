@@ -22,8 +22,9 @@ export class SubscriptionService {
 
     try {
       const savedSubscription = await subscription.save();
-      await this.mailService.sendEmail({
+      await this.mailService.sendConfirmationEmail({
         to: savedSubscription.email,
+        subject: 'Confirm subscription',
         token: savedSubscription._id,
       });
       return;
