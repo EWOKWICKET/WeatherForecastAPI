@@ -28,19 +28,36 @@ export class WeatherSchedulerService {
   }
 
   private async sendUpdates({ frequency, subject }: SendUpdatesOptions) {
-    const subscriptions = await this.subscriptionModel.find({ confirmed: true, frequency });
+    const subscriptions: Subscription[] = await this.subscriptionModel.find({ confirmed: true, frequency });
 
-    for (const subscription of subscriptions) {
-      const weather = await this.weatherApiService.getCurrentWeather(subscription.city);
+    const groupedByCity = this.groupByCity(subscriptions);
 
-      await this.mailService.sendUpdateEmail({
-        to: subscription.email,
-        subject,
-        data: {
-          ...weather,
-          city: subscription.city,
-        },
-      });
+    for (const city of Object.keys(groupedByCity)) {
+      const weather = await this.weatherApiService.getCurrentWeather(city);
+
+      for (const subscription of groupedByCity[city]) {
+        await this.mailService.sendUpdateEmail({
+          to: subscription.email,
+          subject,
+          data: {
+            ...weather,
+            city: subscription.city,
+          },
+        });
+      }
     }
+  }
+
+  private groupByCity(subscriptions: Subscription[]) {
+    const groupedByCity = subscriptions.reduce(
+      (res, sub) => {
+        if (!res[sub.city]) res[sub.city] = [];
+        res[sub.city].push(sub);
+        return res;
+      },
+      {} as Record<string, Subscription[]>,
+    );
+
+    return groupedByCity;
   }
 }
