@@ -19,18 +19,6 @@ export class DatabaseMigration {
   }
 
   async addSubscriptionCollection() {
-    // const collectionExists = (await this.subscriptionModel.countDocuments()) > 0;
-
-    // if (collectionExists) {
-    //   console.log('Subscription collection already exists');
-    // } else {
-    //   console.log("Subscription collection doesn't exist. Creating a collection...");
-    //   await this.subscriptionModel.create({
-    //     email: 'init@exampe.com',
-    //     confirmed: true,
-    //   });
-    //   console.log('Subscription collection created');
-    // }
     const collectionName = this.subscriptionModel.collection.name;
 
     const collection = await this.connection.db.listCollections({ name: collectionName }).next();
