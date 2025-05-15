@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Subscription } from 'rxjs';
 import { MailModule } from 'src/mail/mail.module';
-import { SubscriptionSchema } from 'src/subscriptions/schemas/subscription.schema';
+import { Subscription, SubscriptionSchema } from 'src/subscriptions/schemas/subscription.schema';
 import { WeatherApiService } from './services/weather-api.service';
 import { WeatherSchedulerService } from './services/weather-scheduler.service';
 import { WeatherService } from './services/weather.service';

@@ -29,7 +29,6 @@ export class WeatherSchedulerService {
 
   private async sendUpdates({ frequency, subject }: SendUpdatesOptions) {
     const subscriptions = await this.subscriptionModel.find({ confirmed: true, frequency });
-    // const subscriptions = []; //temporary
 
     for (const subscription of subscriptions) {
       const weather = await this.weatherApiService.getCurrentWeather(subscription.city);
