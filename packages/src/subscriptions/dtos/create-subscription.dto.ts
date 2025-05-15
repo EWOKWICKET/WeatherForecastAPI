@@ -11,5 +11,5 @@ export class CreateSubscriptionDto {
 
   @IsNotEmpty()
   @IsIn(['hourly', 'daily'])
-  frequency: string;
+  frequency: 'daily' | 'hourly';
 }

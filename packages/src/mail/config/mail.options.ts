@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { FullCurrentWeatherDto } from 'src/weather/dtos/location-current-weather.dto';
 
 export interface MailOptions {
   to: string;
@@ -8,4 +9,8 @@ export interface MailOptions {
 
 export interface ConfirmationMailOptions extends MailOptions {
   token: mongoose.Types.ObjectId;
+}
+
+export interface UpdateMailOptions extends MailOptions {
+  data: FullCurrentWeatherDto;
 }

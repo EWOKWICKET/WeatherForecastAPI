@@ -18,7 +18,7 @@ export class SubscriptionService {
     const cityExists = await this.weatherService.cityExists(subscribeDto.city);
     if (!cityExists) throw new BadRequestException('No matching location found.');
 
-    const subscription = new this.subscriptionModel({ ...subscribeDto, confirmed: false });
+    const subscription = new this.subscriptionModel({ ...subscribeDto });
 
     try {
       const savedSubscription = await subscription.save();

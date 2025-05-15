@@ -1,6 +1,6 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
-import { ConfirmationMailOptions, MailOptions } from './config/mail.options';
+import { ConfirmationMailOptions, MailOptions, UpdateMailOptions } from './config/mail.options';
 
 @Injectable()
 export class MailService {
@@ -12,6 +12,21 @@ export class MailService {
     const html = `
       <p> Click <a href="${confirmUrl}">here</a> to confirm email.</p> 
       <p> Click <a href=${unsubscribeUrl}>here</a> to unsubscribe.</p>
+    `;
+
+    await this.sendEmail({
+      to,
+      subject,
+      html,
+    });
+  }
+
+  async sendUpdateEmail({ to, subject, data }: UpdateMailOptions) {
+    const html = `
+      <p>City: ${data.city}</p>
+      <p>Temperature: ${data.temperature}°C</p>
+      <p>Humidity: ${data.humidity}%</p>
+      <p>Description: ${data.description}</p>
     `;
 
     await this.sendEmail({
