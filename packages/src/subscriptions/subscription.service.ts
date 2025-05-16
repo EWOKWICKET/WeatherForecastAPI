@@ -15,8 +15,13 @@ export class SubscriptionService {
   ) {}
 
   async subscribe(subscribeDto: CreateSubscriptionDto) {
-    const cityExists = await this.weatherService.cityExists(subscribeDto.city);
-    if (!cityExists) throw new BadRequestException('No matching location found.');
+    const citiesFound = await this.weatherService.searchCities(subscribeDto.city);
+    if (!citiesFound.includes(subscribeDto.city)) {
+      throw new BadRequestException({
+        message: 'No matching location found',
+        possibleLocations: citiesFound,
+      });
+    }
 
     const subscription = new this.subscriptionModel({ ...subscribeDto });
 
@@ -29,9 +34,7 @@ export class SubscriptionService {
       });
       return;
     } catch (err) {
-      if (subscription._id) {
-        await this.subscriptionModel.findByIdAndDelete(subscription._id);
-      }
+      if (subscription._id) await this.subscriptionModel.findByIdAndDelete(subscription._id);
 
       if (err.code === 11000) throw new ConflictException('Email already subscribed');
       else throw err;

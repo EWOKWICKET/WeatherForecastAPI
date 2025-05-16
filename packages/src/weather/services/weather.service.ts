@@ -9,7 +9,7 @@ export class WeatherService {
     return await this.weatherApiService.getCurrentWeather(city);
   }
 
-  async cityExists(city: string) {
-    return await this.weatherApiService.cityExists(city);
+  async searchCities(city: string) {
+    return await this.weatherApiService.searchCities(city);
   }
 }

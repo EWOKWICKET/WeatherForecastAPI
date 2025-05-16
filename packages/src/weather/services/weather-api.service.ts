@@ -9,12 +9,17 @@ export class WeatherApiService {
     this.api_key = process.env.WEATHER_API_KEY;
   }
 
-  async cityExists(city: string): Promise<boolean> {
+  async searchCities(city: string): Promise<string[]> {
     const searchUrl = `http://api.weatherapi.com/v1/search.json?key=${this.api_key}&q=${city}`;
 
     const response = await fetch(searchUrl);
     const data = await response.json();
-    return Array.isArray(data) && data.length > 0;
+    const cities: string[] = data.reduce((cities, cityInfo) => {
+      if (!cities.includes(cityInfo.name)) cities.push(cityInfo.name);
+      return cities;
+    }, []);
+
+    return cities;
   }
 
   async getCurrentWeather(city: string): Promise<CurrentWeatherResponseDto> {
