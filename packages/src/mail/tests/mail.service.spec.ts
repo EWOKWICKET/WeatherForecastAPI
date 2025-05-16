@@ -9,7 +9,7 @@ describe('MailService', () => {
 
   const sendMailMock = jest.fn();
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MailService,
@@ -24,6 +24,9 @@ describe('MailService', () => {
 
     mailService = module.get<MailService>(MailService);
     mailerService = module.get<MailerService>(MailerService);
+  });
+
+  afterEach(() => {
     sendMailMock.mockReset();
   });
 
