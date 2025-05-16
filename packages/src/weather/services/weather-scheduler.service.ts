@@ -5,14 +5,14 @@ import { Model } from 'mongoose';
 import { MailService } from 'src/mail/mail.service';
 import { Subscription } from 'src/subscriptions/schemas/subscription.schema';
 import { SendUpdatesOptions } from '../config/send-updates.options';
-import { WeatherApiService } from './weather-api.service';
+import { WeatherService } from './weather.service';
 
 @Injectable()
 export class WeatherSchedulerService {
   constructor(
     @InjectModel(Subscription.name) private readonly subscriptionModel: Model<Subscription>,
     private readonly mailService: MailService,
-    private readonly weatherApiService: WeatherApiService,
+    private readonly weatherService: WeatherService,
   ) {}
 
   @Cron('0 * * * *') // every hour(10, 11, 12, ...)
@@ -33,7 +33,7 @@ export class WeatherSchedulerService {
     const groupedByCity = this.groupByCity(subscriptions);
 
     for (const city of Object.keys(groupedByCity)) {
-      const weather = await this.weatherApiService.getCurrentWeather(city);
+      const weather = await this.weatherService.getCurrentWeather(city);
 
       for (const subscription of groupedByCity[city]) {
         await this.mailService.sendUpdateEmail({
