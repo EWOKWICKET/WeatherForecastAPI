@@ -19,18 +19,17 @@ describe('WeatherApiService', () => {
     jest.resetAllMocks();
   });
 
-  describe('searchCities', () => {
-    it('should return cities starting with city name argument', async () => {
+  describe('searchCitiesRaw', () => {
+    it("should return raw info of cities starting with 'city' argument", async () => {
       const mockResponse = [{ name: 'London' }, { name: 'Londonderry' }, { name: 'Londoko' }];
-      const mockResult = ['London', 'Londonderry', 'Londoko'];
 
       global.fetch = jest.fn().mockResolvedValue({
         json: jest.fn().mockResolvedValue(mockResponse),
       });
 
-      const result = await weatherApiService.searchCities('Londo');
+      const result = await weatherApiService.searchCitiesRaw('Londo');
 
-      expect(result).toEqual(mockResult);
+      expect(result).toMatchObject(mockResponse);
       expect(global.fetch).toHaveBeenCalledWith('http://api.weatherapi.com/v1/search.json?key=test_key&q=Londo');
     });
 
@@ -39,14 +38,14 @@ describe('WeatherApiService', () => {
         json: jest.fn().mockResolvedValue([]),
       });
 
-      const result = await weatherApiService.searchCities('NoCity');
+      const result = await weatherApiService.searchCitiesRaw('NoCity');
 
       expect(result).toEqual([]);
     });
   });
 
-  describe('getCurrentWeather', () => {
-    it('should return weather for a city', async () => {
+  describe('getCurrentWeatherRaw', () => {
+    it('should return raw current weather for a city', async () => {
       const mockResponse = {
         current: {
           temp_c: 0,
@@ -56,20 +55,15 @@ describe('WeatherApiService', () => {
           },
         },
       };
-      const mockResult = {
-        temperature: 0,
-        humidity: 1,
-        description: 'Weather',
-      };
 
       global.fetch = jest.fn().mockResolvedValue({
         status: 200,
         json: jest.fn().mockResolvedValue(mockResponse),
       });
 
-      const result = await weatherApiService.getCurrentWeather('London');
+      const result = await weatherApiService.getCurrentWeatherRaw('London');
 
-      expect(result).toEqual(mockResult);
+      expect(result).toMatchObject(mockResponse);
       expect(global.fetch).toHaveBeenCalledWith('http://api.weatherapi.com/v1/current.json?key=test_key&q=London');
     });
 
@@ -79,7 +73,7 @@ describe('WeatherApiService', () => {
         json: jest.fn(),
       });
 
-      await expect(weatherApiService.getCurrentWeather('NoCity')).rejects.toThrow(BadRequestException);
+      await expect(weatherApiService.getCurrentWeatherRaw('NoCity')).rejects.toThrow(BadRequestException);
     });
   });
 });
