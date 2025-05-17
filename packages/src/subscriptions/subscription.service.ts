@@ -1,8 +1,8 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { MailService } from 'src/mail/mail.service';
-import { WeatherService } from 'src/weather/services/weather.service';
+import { MailService } from '../mail/mail.service';
+import { WeatherService } from '../weather/services/weather.service';
 import { CreateSubscriptionDto } from './dtos/create-subscription.dto';
 import { Subscription } from './schemas/subscription.schema';
 
