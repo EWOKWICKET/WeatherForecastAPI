@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <body>
+    <h1>Subscribe to Weather Updates</h1>
+    <form id="subscribe-form">
+      <label for="email">Email:</label>
+      <input type="text" id="email" name="email" required />
+      <br /><br />
+
+      <label for="city">City:</label>
+      <input type="text" id="city" name="city" required />
+      <br /><br />
+
+      <label for="frequency">Frequency:</label>
+      <select id="frequency" name="frequency" required>
+        <option value="hourly">Hourly</option>
+        <option value="daily">Daily</option>
+      </select>
+      <br /><br />
+
+      <button type="submit">Subscribe</button>
+    </form>
+
+    <p id="result"></p>
+
+    <a href="/weatherapi.app/weather"> Current weather </a>
+
+    <script>
+      document.getElementById('subscribe-form').addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const result = document.getElementById('result');
+        result.textContent = 'Loading…';
+
+        const email = document.getElementById('email').value;
+        const city = document.getElementById('city').value;
+        const frequency = document.getElementById('frequency').value;
+
+        const payload = { email, city, frequency };
+
+        try {
+          const response = await fetch('/weatherapi.app/api/subscribe', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+          });
+
+          if (response.ok) {
+            result.textContent = 'Confirmation mail sent. Check you mailbox';
+          } else {
+            const data = await response.json();
+            let message = data.message;
+            if (data.possibleLocations) message += `\nPossible locations: ${data.possibleLocations.join(', ')}`;
+            result.textContent = message;
+          }
+        } catch (error) {
+          console.error(error);
+          result.textContent = 'An error occurred.';
+        }
+      });
+    </script>
+  </body>
+</html>
