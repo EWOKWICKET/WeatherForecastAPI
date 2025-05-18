@@ -30,5 +30,14 @@ export class DatabaseMigration {
       await this.connection.db.createCollection(collectionName);
       console.log('Subscription collection created');
     }
+
+    const indexInfo = await this.subscriptionModel.collection.indexExists('expiresAt_index');
+
+    if (!indexInfo) {
+      await this.subscriptionModel.collection.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0, name: 'expiresAt_index' });
+      console.log('TTL index created on expiresAt');
+    } else {
+      console.log('TTL index on expiresAt already exists');
+    }
   }
 }

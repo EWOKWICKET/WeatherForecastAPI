@@ -23,7 +23,10 @@ export class SubscriptionService {
       });
     }
 
-    const subscription = new this.subscriptionModel({ ...subscribeDto });
+    const subscription = new this.subscriptionModel({
+      ...subscribeDto,
+      expiresAt: new Date(Date.now() + 60 * 60 * 1000),
+    });
 
     try {
       const savedSubscription = await subscription.save();
@@ -44,7 +47,7 @@ export class SubscriptionService {
   async confirm(token: string) {
     if (!Types.ObjectId.isValid(token)) throw new NotFoundException('Token Not Found');
 
-    const updated = await this.subscriptionModel.findByIdAndUpdate(token, { confirmed: true }).exec();
+    const updated = await this.subscriptionModel.findByIdAndUpdate(token, { confirmed: true, expiresAt: null }).exec();
     if (!updated) throw new NotFoundException('Token Not Found');
   }
 

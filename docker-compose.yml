@@ -1,10 +1,10 @@
 services:
   api:
     build:
-      context: ./packages
+      context: ./packages/api
       dockerfile: Dockerfile
     env_file:
-      - ./packages/.env
+      - ./packages/api/.env
     environment:
       - HOST=0.0.0.0
       - DB_HOST=mongo

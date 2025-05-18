@@ -13,6 +13,9 @@ export class Subscription {
 
   @Prop({ default: false })
   confirmed: boolean;
+
+  @Prop({ type: Date, default: null })
+  expiresAt: Date;
 }
 
 export const SubscriptionSchema = SchemaFactory.createForClass(Subscription);
