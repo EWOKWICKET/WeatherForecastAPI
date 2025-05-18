@@ -40,8 +40,8 @@ export class WeatherSchedulerService {
           to: subscription.email,
           subject,
           data: {
+            city,
             ...weather,
-            city: subscription.city,
           },
         });
       }

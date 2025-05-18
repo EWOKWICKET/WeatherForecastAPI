@@ -2,8 +2,8 @@ import { BadRequestException, ConflictException, NotFoundException } from '@nest
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import mongoose, { Model } from 'mongoose';
-import { MailService } from '../../mail/mail.service';
-import { WeatherService } from '../../weather/services/weather.service';
+import { MailService } from 'src/mail/mail.service';
+import { WeatherService } from 'src/weather/services/weather.service';
 import { CreateSubscriptionDto } from '../dtos/create-subscription.dto';
 import { Subscription } from '../schemas/subscription.schema';
 import { SubscriptionService } from '../subscription.service';
@@ -64,7 +64,7 @@ describe('SubscriptionService', () => {
       frequency: 'daily',
     };
 
-    it('successful subscription', async () => {
+    it('should successfully subscribe', async () => {
       const savedSubscription = {
         _id: 'abc123',
         email: mockDto.email,
@@ -105,7 +105,7 @@ describe('SubscriptionService', () => {
       expect(subscriptionModel.findByIdAndDelete).toHaveBeenCalledWith('abc123');
     });
 
-    it('throws other errors if not duplicate', async () => {
+    it('throws other errors', async () => {
       const mockError = new Error('some error');
       weatherService.searchCities.mockResolvedValue(['London']);
 

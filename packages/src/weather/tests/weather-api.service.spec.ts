@@ -47,6 +47,9 @@ describe('WeatherApiService', () => {
   describe('getCurrentWeatherRaw', () => {
     it('should return raw current weather for a city', async () => {
       const mockResponse = {
+        location: {
+          name: 'London',
+        },
         current: {
           temp_c: 0,
           humidity: 1,

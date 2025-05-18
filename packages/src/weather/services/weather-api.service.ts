@@ -23,6 +23,8 @@ export class WeatherApiService {
     if (response.status !== 200) throw new BadRequestException('No matching location found.');
 
     const data = await response.json();
+    if (data.location.name !== city) throw new BadRequestException('No matching location found.');
+
     return data;
   }
 }

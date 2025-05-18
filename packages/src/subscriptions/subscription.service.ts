@@ -1,8 +1,8 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { MailService } from '../mail/mail.service';
-import { WeatherService } from '../weather/services/weather.service';
+import { Model, Types } from 'mongoose';
+import { MailService } from 'src/mail/mail.service';
+import { WeatherService } from 'src/weather/services/weather.service';
 import { CreateSubscriptionDto } from './dtos/create-subscription.dto';
 import { Subscription } from './schemas/subscription.schema';
 
@@ -42,11 +42,15 @@ export class SubscriptionService {
   }
 
   async confirm(token: string) {
+    if (!Types.ObjectId.isValid(token)) throw new NotFoundException('Token Not Found');
+
     const updated = await this.subscriptionModel.findByIdAndUpdate(token, { confirmed: true }).exec();
     if (!updated) throw new NotFoundException('Token Not Found');
   }
 
   async unsubscribe(token: string) {
+    if (!Types.ObjectId.isValid(token)) throw new NotFoundException('Token Not Found');
+
     const deleted = await this.subscriptionModel.findByIdAndDelete(token).exec();
     if (!deleted) throw new NotFoundException('Token Not Found');
   }
