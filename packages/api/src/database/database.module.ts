@@ -10,12 +10,7 @@ import { DatabaseService } from './database.service';
     MongooseModule.forRootAsync({
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
-        const host = configService.get<string>('DB_HOST') || 'localhost';
-        const port = configService.get<number>('DB_PORT') || 27017;
-        const dbName = configService.get<string>('DB_NAME') || 'weatherAPI';
-
-        const uri = `mongodb://${host}:${port}/${dbName}`;
-
+        const uri = configService.get<string>('DB_URI') || 'localhost';
         return { uri };
       },
     }),
