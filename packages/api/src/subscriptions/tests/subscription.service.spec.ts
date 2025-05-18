@@ -118,7 +118,7 @@ describe('SubscriptionService', () => {
     });
   });
 
-  const mockedToken = 'validToken';
+  const mockedToken = new mongoose.Types.ObjectId().toHexString();
   const mockedInvalidToken = 'invalidToken';
   const mockedModelResolvedValue = { _id: mockedToken, confirmed: true };
 
@@ -129,40 +129,48 @@ describe('SubscriptionService', () => {
 
       await expect(subscriptionService.confirm(mockedToken)).resolves.toBeUndefined();
 
-      expect(subscriptionModel.findByIdAndUpdate).toHaveBeenCalledWith(mockedToken, { confirmed: true });
+      expect(subscriptionModel.findByIdAndUpdate).toHaveBeenCalledWith(mockedToken, { confirmed: true, expiresAt: null });
       expect(mockedUpdate).toHaveBeenCalled();
     });
 
-    it('confirmation failed', async () => {
+    it('confirmation fails if token not found', async () => {
       const mockedFailedUpdate = jest.fn().mockResolvedValue(null);
       (subscriptionModel as any).findByIdAndUpdate = jest.fn().mockReturnValue({ exec: mockedFailedUpdate });
 
-      await expect(subscriptionService.confirm(mockedInvalidToken)).rejects.toThrow(NotFoundException);
+      await expect(subscriptionService.confirm(mockedToken)).rejects.toThrow(NotFoundException);
 
-      expect(subscriptionModel.findByIdAndUpdate).toHaveBeenCalledWith(mockedInvalidToken, { confirmed: true });
+      expect(subscriptionModel.findByIdAndUpdate).toHaveBeenCalledWith(mockedToken, { confirmed: true, expiresAt: null });
       expect(mockedFailedUpdate).toHaveBeenCalled();
+    });
+
+    it('confirmation fails if token is invalid', async () => {
+      await expect(subscriptionService.confirm(mockedInvalidToken)).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('unsubscribe', () => {
     it('unsubscription successful', async () => {
       const mockedDelete = jest.fn().mockResolvedValue(mockedModelResolvedValue);
-      (subscriptionModel as any).findByIdAndUpdate = jest.fn().mockReturnValue({ exec: mockedDelete });
+      (subscriptionModel as any).findByIdAndDelete = jest.fn().mockReturnValue({ exec: mockedDelete });
 
-      await expect(subscriptionService.confirm(mockedToken)).resolves.toBeUndefined();
+      await expect(subscriptionService.unsubscribe(mockedToken)).resolves.toBeUndefined();
 
-      expect(subscriptionModel.findByIdAndUpdate).toHaveBeenCalledWith(mockedToken, { confirmed: true });
+      expect(subscriptionModel.findByIdAndDelete).toHaveBeenCalledWith(mockedToken);
       expect(mockedDelete).toHaveBeenCalled();
     });
 
-    it('unsubscription failed', async () => {
+    it('unsubscription fails if token not found', async () => {
       const mockedFailedDelete = jest.fn().mockResolvedValue(null);
-      (subscriptionModel as any).findByIdAndUpdate = jest.fn().mockReturnValue({ exec: mockedFailedDelete });
+      (subscriptionModel as any).findByIdAndDelete = jest.fn().mockReturnValue({ exec: mockedFailedDelete });
 
-      await expect(subscriptionService.confirm(mockedInvalidToken)).rejects.toThrow(NotFoundException);
+      await expect(subscriptionService.unsubscribe(mockedToken)).rejects.toThrow(NotFoundException);
 
-      expect(subscriptionModel.findByIdAndUpdate).toHaveBeenCalledWith(mockedInvalidToken, { confirmed: true });
+      expect(subscriptionModel.findByIdAndDelete).toHaveBeenCalledWith(mockedToken);
       expect(mockedFailedDelete).toHaveBeenCalled();
+    });
+
+    it('unsubscription fails if token is invalid', async () => {
+      await expect(subscriptionService.unsubscribe(mockedInvalidToken)).rejects.toThrow(NotFoundException);
     });
   });
 });
