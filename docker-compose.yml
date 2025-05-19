@@ -1,7 +1,7 @@
 services:
-  api:
+  app:
     build:
-      context: ./packages/api
+      context: ./packages
       dockerfile: Dockerfile
     env_file:
       - ./packages/api/.env
