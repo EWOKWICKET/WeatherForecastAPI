@@ -107,3 +107,7 @@ MAIL_USER=your_email@gmail.com
 MAIL_PASS=your_email_app_password
 WEATHER_API_KEY=your_openweathermap_api_key
 ```
+
+## Subscription page
+
+Visit page http://HOST:PORT/weatherapi.app/ to subscribe

@@ -1,4 +1,3 @@
-import { RequestMethod } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
@@ -7,12 +6,7 @@ import { DatabaseService } from './database/database.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.setGlobalPrefix('weatherapi.app/api', {
-    exclude: [
-      { path: 'weatherapi.app/weather', method: RequestMethod.GET },
-      { path: 'weatherapi.app/subscribe', method: RequestMethod.GET },
-    ],
-  });
+  app.setGlobalPrefix('weatherapi.app/api');
   app.enableCors();
 
   const dbService: DatabaseService = app.get(DatabaseService);
